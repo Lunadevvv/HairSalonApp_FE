@@ -1,10 +1,10 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Layout from './layouts/Layout'; 
-import Profile from './Pages/Profile/Profile'
-import Salon from './Pages/Salon/Salon'; 
-import Staff from './Pages/Staff/Staff';
-import Wage from './Pages/Wage/Wage';
-import Booking from './Pages/Booking/Booking';
+import Layout from './layout/layouts/admin/layout'; 
+import Profile from './pages/Admin/profile'
+import Salon from './pages/Admin/salon'; 
+import Staff from './pages/Admin/staff';
+import Wage from './pages/Admin/wage';
+import Booking from './pages/Admin/booking';
 
 function App() {
   return (
