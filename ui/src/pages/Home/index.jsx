@@ -134,8 +134,15 @@ function Home() {
 
   const handleOk = () => {
     if (isChecked) {
-      setIsModalOpen(false);
-      navigate('/booking');
+      const token = localStorage.getItem('token');
+      console.log('Token found:', token); // Thêm log để kiểm tra
+      if (token) {
+        setIsModalOpen(false);
+        navigate('/booking');
+      } else {
+        message.error('Vui lòng đăng nhập để đặt lịch.');
+        navigate('/login'); // Chuyển hướng đến trang đăng nhập
+      }
     } else {
       message.error('Vui lòng đồng ý với chính sách trước khi tiếp tục.');
     }

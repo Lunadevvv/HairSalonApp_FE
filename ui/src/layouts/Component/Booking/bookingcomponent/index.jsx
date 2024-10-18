@@ -14,6 +14,7 @@ import stylist4 from "../../../../assets/imageHome/Stylist/Stylist_4.jpg";
 import stylist5 from "../../../../assets/imageHome/Stylist/Stylist_5.jpg";
 import stylist6 from "../../../../assets/imageHome/Stylist/Stylist_6.jpg";
 import { DownOutlined } from '@ant-design/icons';
+import axios from 'axios';
 
 const { Title, Paragraph } = Typography;
 const { Option } = Select;
@@ -31,6 +32,7 @@ const BookingComponent = () => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
   const [recurringBooking, setRecurringBooking] = useState(null);
+  const [accountId, setAccountId] = useState(null);
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const showModal = () => setIsModalVisible(true);
@@ -65,6 +67,46 @@ const BookingComponent = () => {
     }
   }, [location]);
 
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    console.log('Token in BookingComponent:', token);
+
+    if (!token) {
+      message.error('Vui lòng đăng nhập để đặt lịch.');
+      navigate('/login');
+      return;
+    }
+
+    fetchAccountInfo(token);
+  }, [navigate]);
+
+  const fetchAccountInfo = async (token) => {
+    try {
+      const response = await axios.get('http://localhost:8080/api/v1/profile/', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      console.log('Account info response:', response.data);
+
+      if (response.data && response.data.result && response.data.result.id) {
+        setAccountId(response.data.result.id);
+      } else {
+        throw new Error('Không thể lấy thông tin tài khoản');
+      }
+    } catch (error) {
+      console.error("Lỗi khi lấy thông tin tài khoản:", error);
+      if (error.response && error.response.status === 401) {
+        message.error("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
+        localStorage.removeItem('token');
+        navigate('/login');
+      } else {
+        message.error("Có lỗi xảy ra khi lấy thông tin tài khoản. Vui lòng thử lại.");
+      }
+    }
+  };
+
   const handleViewAllServices = () => {
     if (selectedSalon) {
       navigate('/booking?step=2');
@@ -84,52 +126,57 @@ const BookingComponent = () => {
     navigate('/booking?step=0');
   };
 
-  const handleSubmit = () => {
-    // Kiểm tra xem đã chọn đủ thông tin chưa
+//MẪU API VÀ REQUEST DỮ LIỆU VỀ CHO BE 
+
+  const handleSubmit = async () => {
+    if (!accountId) {
+      message.error("Vui lòng đăng nhập để đặt lịch.");
+      navigate('/login');
+      return;
+    }
+
+    // Kiểm tra các thông tin khác...
     if (!selectedSalon || selectedServices.length === 0 || !selectedStylist || !selectedDate || !selectedTime) {
       message.error("Vui lòng chọn đầy đủ thông tin trước khi đặt lịch.");
       return;
     }
-
-    // Lưu thông tin đã chọn vào localStorage, object chua thong tin dat lich 
-    const bookingInfo = {
-      salon: selectedSalon,
-      services: selectedServices,
-      stylist: selectedStylist,
-      date: selectedDate,
-      time: selectedTime,
-      totalPrice: totalPrice,
-      recurringBooking: recurringBooking
+//MẪU Ở ĐÂY
+    const requestBody = {
+      accountId: accountId,
+      date: selectedDate.date.toISOString().split('T')[0].replace(/-/g, '/'),
+      slotId: convertTimeToSlotId(selectedTime),
+      services: selectedServices.map(service => ({
+        type: service.type || "service",
+        id: service.id
+      })),
+      recurringWeeks: recurringBooking || 0,
+      stylistId: selectedStylist.id
     };
-    localStorage.setItem('bookingInfo', JSON.stringify(bookingInfo));
-    console.log(bookingInfo);
-
-  //   try {
-  //     // Gửi dữ liệu đến server
-  //     const response = await axios.post('https://your-api-endpoint.com/bookings', bookingInfo);
+    console.log("Request Body:", requestBody);
+// MẪU API
+    try {
+      const response = await axios.post('http://localhost:8080/api/v1/getBooking', requestBody, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
       
-  //     if (response.status === 200) {
-  //       // Nếu đặt lịch thành công
-  //       message.success("Đặt lịch thành công!");
-        
-  //       // Lưu thông tin đã chọn vào localStorage (nếu cần)
-  //       localStorage.setItem('bookingInfo', JSON.stringify(bookingInfo));
+      if (response.data.status === "success") {
+        localStorage.setItem('bookingInfo', JSON.stringify(response.data.bookingDetails));
+        navigate('/booking/success');
+      } else {
+        message.error("Có lỗi xảy ra khi đặt lịch. Vui lòng thử lại.");
+      }
+    } catch (error) {
+      console.error("Lỗi khi gửi yêu cầu đặt lịch:", error.response || error);
+      message.error("Có lỗi xảy ra khi đặt lịch. Vui lòng thử lại.");
+    }
+  };
 
-  //       // Chuyển hướng đến trang success
-  //       navigate('/booking/success');
-  //     } else {
-  //       // Nếu có lỗi từ server
-  //       message.error("Có lỗi xảy ra khi đặt lịch. Vui lòng thử lại.");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error submitting booking:", error);
-  //     message.error("Có lỗi xảy ra khi đặt lịch. Vui lòng thử lại.");
-  //   }
-  // };
-
-
-    // Chuyển hướng đến trang success
-    navigate('/booking/success');
+  // Hàm chuyển đổi thời gian thành slotId
+  const convertTimeToSlotId = (time) => {
+    const [hours, minutes] = time.split('h').map(Number);
+    return (hours - 8) * 2 + (minutes === 40 ? 1 : 0);
   };
 
   const renderStepContent = () => {
