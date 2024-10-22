@@ -20,6 +20,7 @@ import ShineHistory from './pages/ShineHistory';
 import ChangePassword from './pages/ChangePassword';
 import AllServices from './layouts/Component/services/allservices';
 import ServiceDetail from './layouts/Component/services/ServiceDetails';
+import ComboDetail from './layouts/Component/Combo/ComboDetail';
 
 
 // Admin pages
@@ -40,12 +41,13 @@ import Combo from './pages/admin/combo/combo';
 import AddCombo from './pages/admin/combo/addCombo';
 import UpdateCombo from './pages/admin/combo/updateCombo';
 import AllCombos from './layouts/Component/Combo/allcombos';
+import SalonList from './pages/admin/salon/dasboardsalon/index';
 
 import Slot from './pages/admin/slot/slot';
 import AddSlot from './pages/admin/slot/addSlot';
 import UpdateSlot from './pages/admin/slot/updateSlot';
+import UpdateSalon from './pages/admin/salon/updatesalon/updatesalon';
 
-import ComboDetail from './layouts/Component/Combo/ComboDetail';
 
 
 
@@ -124,6 +126,9 @@ const router = createBrowserRouter([
       { path: "slot", element: <Slot /> },
       { path: "slot/addSlot", element: <AddSlot /> },
       { path: "slot/updateSlot/", element: <UpdateSlot /> },
+      { path: "salon", element: <SalonList /> },
+
+      { path: "salon/updateSalon/:id", element: <UpdateSalon /> },
     ],
   },
   {

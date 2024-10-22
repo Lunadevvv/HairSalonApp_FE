@@ -12,6 +12,7 @@ import logoutIcon from '../../assets//admin/Fill.svg'
 import serviceIcon from '../../assets/admin/serviceIcon.svg'
 import categoryIcon from '../../assets/admin/category.svg'
 import slotIcon from '../../assets/admin/slot.svg'
+import salonIcon from '../../assets/admin/salon.svg'
 const Sidebar = () => {
         
 		const navigate = useNavigate(); // Sử dụng useNavigate để điều hướng
@@ -75,6 +76,15 @@ const Sidebar = () => {
             						<div className={styles.itemContent}>Khung giờ</div>
           					</div>
         				</div>
+						
+						<div className={`${styles.item} ${activeItem === 'salon' ? styles.active : ''}`} 
+                            onClick={() => handleItem('/admin/salon', 'salon')}>
+          					<div className={styles.itemGroup}>
+            						<img className={styles.navIcon} alt="" src={salonIcon} />
+            						<div className={styles.itemContent}>Salon</div>
+          					</div>
+        				</div>
+
 						<div className={`${styles.item} ${activeItem === 'service' ? styles.active : ''}`} 
                             onClick={() => handleItem('/admin/service', 'service')}>
           					<div className={styles.itemGroup}>
