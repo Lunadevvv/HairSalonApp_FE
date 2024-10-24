@@ -47,6 +47,7 @@ import Slot from './pages/admin/slot/slot';
 import AddSlot from './pages/admin/slot/addSlot';
 import UpdateSlot from './pages/admin/slot/updateSlot';
 import UpdateSalon from './pages/admin/salon/updatesalon/updatesalon';
+import AddSalon from './pages/admin/salon/createsalon/addsalon';
 
 
 
@@ -127,7 +128,7 @@ const router = createBrowserRouter([
       { path: "slot/addSlot", element: <AddSlot /> },
       { path: "slot/updateSlot/", element: <UpdateSlot /> },
       { path: "salon", element: <SalonList /> },
-
+      { path: "salon/addSalon", element: <AddSalon /> },
       { path: "salon/updateSalon/:id", element: <UpdateSalon /> },
     ],
   },

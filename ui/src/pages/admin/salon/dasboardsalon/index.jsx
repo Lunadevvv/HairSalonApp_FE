@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import React, { useState, useEffect } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
 import NavLink from '../../../../layouts/admin/components/link/navLink'
 import HeaderColumn from '../../../../layouts/admin/components/table/headerColumn'
 import HeaderButton from '../../../../layouts/admin/components/table/button/headerButton'
@@ -8,32 +8,48 @@ import styles from './salon.module.css'
 
 const SalonList = () => {
     const navigate = useNavigate()
+    const location = useLocation()
     const [searchText, setSearchText] = useState('')
 
-    // Dữ liệu mẫu cho salon
-    const sampleSalons = [
+    // Sample data for salons
+    const [salons, setSalons] = useState([
         { id: 1, name: "Salon A", address: "123 Street A", phone: "0123456789", email: "salonA@example.com", status: "Hoạt động" },
         { id: 2, name: "Salon B", address: "456 Street B", phone: "0987654321", email: "salonB@example.com", status: "Tạm ngưng" },
-    ]
+    ])
+
+    useEffect(() => {
+        if (location.state && location.state.updatedSalon) {
+            setSalons(prevSalons => 
+                prevSalons.map(salon => 
+                    salon.id === location.state.updatedSalon.id ? location.state.updatedSalon : salon
+                )
+            )
+            // Clear the state after updating
+            navigate(location.pathname, { replace: true, state: {} })
+        }
+    }, [location.state, navigate])
 
     const handleSearch = (value) => {
         setSearchText(value)
-        // Thêm logic tìm kiếm thực tế ở đây
+        // Implement actual search logic here
     }
 
-    const handleEdit = (id) => {
-        console.log("Edit salon:", id)
-        // Thêm logic chỉnh sửa
+    const handleEdit = (salon) => {
+        navigate(`/admin/salon/updatesalon/${salon.id}`, { state: { salon } })
     }
 
     const handleDelete = (id) => {
-        console.log("Delete salon:", id)
-        // Thêm logic xóa
+        // Show confirmation dialog
+        if (window.confirm('Bạn có chắc chắn muốn xóa salon này?')) {
+            // Remove salon from the list
+            setSalons(salons.filter(salon => salon.id !== id))
+            // In a real application, you would also make an API call to delete the salon from the backend
+        }
     }
 
+
     const handleAddSalon = () => {
-        console.log("Add new salon")
-        // Thêm logic để thêm salon mới
+        navigate('/admin/salon/addsalon')
     }
 
     return (
@@ -61,7 +77,7 @@ const SalonList = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {sampleSalons.map((salon) => (
+                            {salons.map((salon) => (
                                 <tr key={salon.id} className={styles.row}>
                                     <td className={styles.info}>{salon.id}</td>
                                     <td className={styles.info}>{salon.name}</td>
