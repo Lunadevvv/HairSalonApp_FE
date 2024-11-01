@@ -9,7 +9,12 @@ const BookingSuccess = () => {
   const bookingInfo = location.state?.bookingInfo;
   const selectedServices = location.state?.selectedServices || [];
   const selectedCombos = location.state?.selectedCombos || [];
+  const selectedSalon = location.state?.selectedSalon;
   const [stylistName, setStylistName] = useState('');
+
+  const formatTime = (time) => {
+    return time ? `${time}:00` : '';
+  };
 
   useEffect(() => {
     const fetchStylistInfo = async () => {
@@ -86,8 +91,12 @@ const BookingSuccess = () => {
       <h1>Đặt lịch thành công!</h1>
       <div className="booking-details">
         <p><strong>Mã đặt lịch:</strong> {bookingInfo.id}</p>
-        <p><strong>Ngày:</strong> {moment(bookingInfo.date).format('DD/MM/YYYY')}</p>
-        <p><strong>Giờ:</strong> {bookingInfo.slot.timeStart}</p>
+
+          <p><strong>Chi nhánh :</strong> {selectedSalon?.address}</p>
+
+      
+        <p><strong>Ngày đặt lịch:</strong> {moment(bookingInfo.date).format('DD/MM/YYYY')}</p>
+        <p><strong>Giờ đặt lịch:</strong> {formatTime(bookingInfo.slot.timeStart)}</p>
         <p><strong>Stylist:</strong> {stylistName || 'Đang tải...'}</p>
         {renderServices()}
         <p><strong>Tổng giá:</strong> {formatPrice(bookingInfo.price)}</p>

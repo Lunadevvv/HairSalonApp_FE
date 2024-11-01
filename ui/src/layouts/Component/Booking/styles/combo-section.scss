@@ -1,0 +1,60 @@
+.booking-combo-container {
+    .combo-item {
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      cursor: pointer;
+      height: 90%;
+  
+      .combo-services__images {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
+      }
+  
+      .combo-services__image-container {
+        width: 48%;
+        aspect-ratio: 1 / 1;
+        overflow: hidden;
+        border-radius: 8px;
+        height: 100%;
+      }
+  
+      .combo-services__image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+  
+        &:hover {
+          transform: scale(1.05);
+        }
+      }
+  
+      .combo-content {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        
+        h3 {
+          font-size: 18px;
+          margin: 10px;
+          color: #15397f;
+        }
+  
+        p {
+          margin: 0 10px 10px;
+          font-size: 14px;
+        }
+  
+        .price {
+          font-weight: bold;
+          color: #15397f;
+          margin-top: auto;
+        }
+      }
+    }
+  }

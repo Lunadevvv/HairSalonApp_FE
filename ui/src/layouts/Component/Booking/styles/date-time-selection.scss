@@ -1,0 +1,187 @@
+.date-time-selection {
+    .date-selection {
+      position: relative;
+      margin-bottom: 20px;
+  
+      .date-dropdown {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        width: 95%;
+        cursor: pointer;
+  
+        .icon {
+          margin-right: 10px;
+        }
+  
+        .tag {
+          margin-left: auto;
+          padding: 2px 8px;
+          border-radius: 12px;
+          font-size: 0.8em;
+  
+          &.weekend {
+            background-color: #ff9999;
+            color: white;
+          }
+  
+          &.weekday {
+            background-color: #66cc66;
+            color: white;
+          }
+        }
+  
+        .arrow {
+          margin-left: 10px;
+        }
+      }
+  
+      .date-list {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background-color: white;
+        border: 1px solid #ccc;
+        border-top: none;
+        border-radius: 0 0 4px 4px;
+        z-index: 10;
+  
+        .date-item {
+          display: flex;
+          align-items: center;
+          padding: 10px;
+          cursor: pointer;
+  
+          &:hover {
+            background-color: #f0f0f0;
+          }
+  
+          &.selected {
+            background-color: #e6f7ff;
+          }
+  
+          .tag {
+            margin-left: auto;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+  
+            &.weekend {
+              background-color: #ff9999;
+              color: white;
+            }
+  
+            &.weekday {
+              background-color: #66cc66;
+              color: white;
+            }
+          }
+        }
+      }
+    }
+  
+    .time-selection {
+      margin-top: 20px;
+  
+      h4 {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+  
+        .icon {
+          margin-right: 10px;
+        }
+      }
+  
+      .time-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: flex-start;
+      }
+  
+      .time-button {
+        flex: 0 0 auto;
+        padding: 10px 15px;
+        border: 1px solid #ccc;
+        background-color: #fff;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: center;
+        min-width: 80px;
+        font-size: 14px;
+  
+        &:hover {
+          background-color: #f0f0f0;
+        }
+  
+        &.selected {
+          background-color: #15397f;
+          color: white;
+          border-color: #15397f;
+        }
+  
+        &.disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+          background-color: #f0f0f0;
+        }
+      }
+    }
+  
+    .recurring-booking {
+      margin-top: 30px;
+      padding: 20px 0;
+  
+      h4 {
+        font-size: 18px;
+        margin-bottom: 15px;
+        color: #333;
+      }
+  
+      .ant-typography {
+        margin-bottom: 15px;
+        color: #666;
+      }
+  
+      .ant-select {
+        width: 100%;
+  
+        .ant-select-selector {
+          border-color: #d9d9d9;
+          border-radius: 4px;
+          height: 40px;
+          display: flex;
+          align-items: center;
+        }
+  
+        .ant-select-selection-item {
+          font-size: 16px;
+          color: #333;
+        }
+  
+        .ant-select-arrow {
+          color: #f7941d;
+        }
+  
+        &:hover, &.ant-select-focused {
+          .ant-select-selector {
+            border-color: #f7941d;
+          }
+        }
+      }
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .time-selection {
+      .time-grid {
+        justify-content: space-between;
+      }
+      .time-button {
+        flex: 0 0 calc(33.33% - 10px);
+      }
+    }
+  }

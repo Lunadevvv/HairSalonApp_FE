@@ -3,6 +3,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { Dropdown, Menu, Modal, message } from 'antd';
 import { UserOutlined, LogoutOutlined, DownOutlined, KeyOutlined, StarOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
+import axiosInstance from '../../../utils/axiosConfig';
 import "./index.scss";
 
 function Header() {
@@ -27,39 +28,44 @@ function Header() {
   console.log('Stored userRole:', userRole);
 
   useEffect(() => {
-    const checkLoginStatus = () => {
-      console.log('Checking login status in Header');
+    const checkLoginStatus = async () => {
       const token = localStorage.getItem('token');
       const name = localStorage.getItem('userName');
       const storedUsername = localStorage.getItem('username');
       const storedUserRole = localStorage.getItem('userRole');
-      console.log('Stored userRole:', storedUserRole);
-      console.log('Stored token:', token);
-      console.log('Stored userName:', name);
-      console.log('Stored username:', storedUsername);
-      setIsLoggedIn(!!token);
+
+      if (!token) {
+        setIsLoggedIn(false);
+        return;
+      }
+
+      setIsLoggedIn(true);
       setUserName(name || '');
       setUsername(storedUsername || '');
       setUserRole(storedUserRole || null);
-      if (token) {
-        fetch('http://localhost:8080/api/v1/profile/', {
-          headers: {
-            'Authorization': `Bearer ${token}`
+
+      try {
+        const response = await axiosInstance.get('/profile/');
+        console.log('Profile response:', response);
+
+        if (response.data && response.data.result) {
+          const { firstName, lastName, shinePoint, userRole } = response.data.result;
+          setFirstName(firstName || '');
+          setLastName(lastName || '');
+          setShinePoint(shinePoint || 0);
+          
+          if (userRole) {
+            setUserRole(userRole);
+            localStorage.setItem('userRole', userRole);
           }
-        })
-        .then(response => response.json())
-        .then(data => {
-          if (data.result) {
-            setFirstName(data.result.firstName || '');
-            setLastName(data.result.lastName || '');
-            setShinePoint(data.result.shinePoint || 0);
-            if (data.result.userRole) {
-              setUserRole(data.result.userRole);
-              localStorage.setItem('userRole', data.result.userRole);
-            }
-          }
-        })
-        .catch(error => console.error('Error fetching profile:', error));
+        }
+      } catch (error) {
+        console.error('Error fetching profile:', error);
+        if (error.response?.status === 401) {
+          handleLogout();
+        } else {
+          message.error('Không thể tải thông tin người dùng');
+        }
       }
     };
 
@@ -67,11 +73,15 @@ function Header() {
 
     const handleLoginEvent = (event) => {
       console.log('Login event received in Header', event.detail);
-      setUserRole(event.detail.role);
-      setFirstName(event.detail.firstName);
-      setLastName(event.detail.lastName);
+      if (event.detail) {
+        const { role, firstName, lastName } = event.detail;
+        setUserRole(role);
+        setFirstName(firstName || '');
+        setLastName(lastName || '');
+      }
       checkLoginStatus();
     };
+
     window.addEventListener('storage', checkLoginStatus);
     window.addEventListener('login', handleLoginEvent);
     window.addEventListener('logout', checkLoginStatus);
@@ -81,7 +91,6 @@ function Header() {
       window.removeEventListener('login', handleLoginEvent);
       window.removeEventListener('logout', checkLoginStatus);
     };
-
   }, []);
 
   const handleLogout = () => {
@@ -89,20 +98,23 @@ function Header() {
       title: 'Xác nhận đăng xuất',
       content: 'Bạn có chắc chắn muốn đăng xuất?',
       onOk() {
-        localStorage.removeItem('token');
-        localStorage.removeItem('username');
-        localStorage.removeItem('userName');
-        localStorage.removeItem('userRole');
-        setUserName('');
-        setUsername('');
-        setUserRole(null);
+        try {
+          localStorage.clear();
+          setIsLoggedIn(false);
+          setUserName('');
+          setUsername('');
+          setUserRole(null);
+          setFirstName('');
+          setLastName('');
+          setShinePoint(0);
 
-        window.dispatchEvent(new Event('logout'));
-        navigate('/home');
-        message.success('Đăng xuất thành công');
-      },
-      onCancel() {
-        console.log('Hủy đăng xuất');
+          window.dispatchEvent(new Event('logout'));
+          navigate('/home');
+          message.success('Đăng xuất thành công');
+        } catch (error) {
+          console.error('Logout error:', error);
+          message.error('Đăng xuất thất bại');
+        }
       },
     });
   };

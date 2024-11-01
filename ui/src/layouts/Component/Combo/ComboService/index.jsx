@@ -68,6 +68,13 @@ const ComboServices = () => {
   useEffect(() => {
     const loadData = async () => {
       try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          setError("Vui lòng đăng nhập để xem combo dịch vụ");
+          navigate('/login');
+          return;
+        }
+
         const response = await fetchCombos();
         console.log('Raw combos data:', JSON.stringify(response, null, 2));
 
@@ -87,16 +94,21 @@ const ComboServices = () => {
           console.error('Combos data is not an array:', combosData);
           setError("Dữ liệu combo không hợp lệ.");
         }
-        setLoading(false);
       } catch (err) {
         console.error('Error loading data:', err);
-        setError("Không thể tải dữ liệu. Vui lòng thử lại sau.");
+        if (err.message === 'No token found' || err.message === 'Unauthorized access') {
+          setError("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
+          navigate('/login');
+        } else {
+          setError("Không thể tải dữ liệu combo. Vui lòng thử lại sau.");
+        }
+      } finally {
         setLoading(false);
       }
     };
 
     loadData();
-  }, []);
+  }, [navigate]);
 
   if (loading) return <div>Đang tải...</div>;
   if (error) return <div>{error}</div>;

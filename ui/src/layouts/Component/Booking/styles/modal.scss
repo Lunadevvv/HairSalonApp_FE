@@ -1,0 +1,194 @@
+// Modal Styles
+.ant-modal {
+    width: 90% !important;
+    max-width: 1000px !important;
+  
+    .ant-modal-content {
+      border-radius: 8px;
+      overflow: hidden;
+    }
+  
+    .ant-modal-body {
+      padding: 24px;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+  }
+  
+  // Common Buttons
+  .submit-button {
+    width: 100%;
+    padding: 15px;
+    background-color: #15397f;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 20px;
+  
+    &:hover {
+      background-color: #fff;
+      color: #15397f;
+      border: 1px solid #15397f;
+    }
+  
+    &:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+  }
+  
+  .back-button {
+    display: flex;
+    align-items: center;
+    background: none;
+    border: none;
+    color: #002244;
+    cursor: pointer;
+    font-size: 20px;
+    margin-bottom: 10px;
+  
+    svg {
+      margin-right: 5px;
+    }
+  
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+  
+  // Message Notifications
+  .ant-message-notice-content {
+    background-color: #fffbe6;
+    border: 1px solid #ffe58f;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+  
+  .ant-message-warning .anticon {
+    color: #faad14;
+  }
+  
+  // Select Dropdown
+  .ant-select-dropdown {
+    .ant-select-item {
+      padding: 10px 12px;
+      font-size: 16px;
+  
+      &:hover {
+        background-color: #fff7e6;
+      }
+  
+      &.ant-select-item-option-selected {
+        background-color: #ffd591;
+        color: #333;
+      }
+    }
+  }
+  
+  // Radio Buttons
+  .ant-radio-wrapper {
+    white-space: nowrap;
+    overflow: visible;
+  
+    span.ant-radio + span {
+      padding-left: 8px;
+      padding-right: 8px;
+    }
+  }
+  
+  // Form Error Messages
+  .form-error {
+    color: #ff4d4f;
+    margin-top: 10px;
+    font-size: 14px;
+  }
+  
+  // Done Button
+  .done-button {
+    background-color: #15397f;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+  
+    &:hover {
+      background-color: #fff;
+      color: #15397f;
+      border: 1px solid #15397f;
+    }
+  
+    &:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+  }
+  
+  // Tags
+  .tag {
+    background-color: #4CAF50;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    margin-left: 10px;
+  }
+  
+  // Loading States
+  .loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  // Utility Classes
+  .text-center {
+    text-align: center;
+  }
+  
+  .mb-1 {
+    margin-bottom: 8px;
+  }
+  
+  .mb-2 {
+    margin-bottom: 16px;
+  }
+  
+  .mb-3 {
+    margin-bottom: 24px;
+  }
+  
+  .mt-1 {
+    margin-top: 8px;
+  }
+  
+  .mt-2 {
+    margin-top: 16px;
+  }
+  
+  .mt-3 {
+    margin-top: 24px;
+  }
+  
+  // Responsive Utilities
+  @media (max-width: 768px) {
+    .ant-modal {
+      width: 95% !important;
+    }
+  
+    .submit-button,
+    .done-button {
+      padding: 12px;
+      font-size: 14px;
+    }
+  }
