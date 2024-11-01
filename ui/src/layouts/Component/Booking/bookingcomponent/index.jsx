@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { message, Modal } from 'antd';
+import { message, Modal, Radio, Typography, Select, Button } from 'antd';
+import { FaSearch, FaTimes, FaChevronLeft, FaUser, FaChevronRight, FaCalendarAlt, FaClock } from 'react-icons/fa';
+import { DownOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import moment from 'moment';
-import { FaChevronLeft } from 'react-icons/fa';
+import SelectedServicesModal from '../selectservicemodal';
 import { ServiceSelectionStep } from '../components/ServiceSelectionStep';
 import { DateTimeSelectionStep } from '../components/DateTimeSelectionStep';
 import SalonSelection from '../components/SalonSelection';
 import '../../../Component/Booking/styles/main.scss';
-
+import './index.scss';
 
 const BookingComponent = () => {
   // State Management
@@ -27,8 +29,6 @@ const BookingComponent = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-
-
   // Handle URL step parameter
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -39,24 +39,6 @@ const BookingComponent = () => {
       setStep(0);
     }
   }, [location]);
-
-  // Thêm useEffect để log và kiểm tra selectedSalon
-  useEffect(() => {
-    console.log('Selected Salon Updated:', selectedSalon);
-  }, [selectedSalon]);
-
-  // Thêm useEffect để debug
-  useEffect(() => {
-    console.log('Booking State:', {
-      selectedSalon,
-      selectedServices,
-      selectedCombos,
-      selectedDate,
-      selectedTime,
-      selectedStylist,
-      totalPrice
-    });
-  }, [selectedSalon, selectedServices, selectedCombos, selectedDate, selectedTime, selectedStylist, totalPrice]);
 
   // Debug useEffect
   useEffect(() => {
@@ -93,7 +75,6 @@ const BookingComponent = () => {
     navigate('/booking?step=0');
   };
 
-  // Cập nhật hàm xử lý chọn salon
   const handleSalonSelect = (salon) => {
     console.log('Handling salon selection:', salon);
     if (!salon?.salonId) {
@@ -161,7 +142,7 @@ const BookingComponent = () => {
         const bookingInfo = {
           ...response.data.result,
           slot: {
-            timeStart: response.data.result.timeStart || selectedTime
+            timeStart: `${response.data.result.timeStart || selectedTime}:00`
           },
           status: response.data.result.status || 'Đã đặt lịch',
           salon: {
@@ -178,7 +159,7 @@ const BookingComponent = () => {
             bookingInfo: bookingInfo,
             selectedServices: selectedServices,
             selectedCombos: selectedCombos,
-            selectedSalon: selectedSalon // Thêm thông tin salon
+            selectedSalon: selectedSalon
           }
         });
       }
@@ -186,6 +167,36 @@ const BookingComponent = () => {
       console.error('Booking error:', error);
       message.error(error.response?.data?.message || "Có lỗi xảy ra khi đặt lịch");
     }
+  };
+
+  const canSubmitBooking = () => {
+    console.log('Detailed booking values:', {
+      salon: selectedSalon,
+      services: selectedServices,
+      combos: selectedCombos,
+      date: selectedDate,
+      time: selectedTime,
+      stylist: selectedStylist
+    });
+
+    const hasSalon = Boolean(selectedSalon?.salonId);
+    const hasServices = selectedServices.length > 0 || selectedCombos.length > 0;
+    const hasDate = Boolean(selectedDate?.date);
+    const hasTime = Boolean(selectedTime);
+    const hasStylist = Boolean(selectedStylist);
+
+    console.log('Individual conditions:', {
+      hasSalon,
+      hasServices,
+      hasDate,
+      hasTime,
+      hasStylist,
+      dateValue: selectedDate?.date,
+      timeValue: selectedTime,
+      stylistValue: selectedStylist
+    });
+
+    return hasSalon && hasServices && hasDate && hasTime && hasStylist;
   };
 
   const renderStepContent = () => {
@@ -254,38 +265,6 @@ const BookingComponent = () => {
     }
   };
 
-  const canSubmitBooking = () => {
-    // Log chi tiết giá trị
-    console.log('Detailed booking values:', {
-      salon: selectedSalon,
-      services: selectedServices,
-      combos: selectedCombos,
-      date: selectedDate,
-      time: selectedTime,
-      stylist: selectedStylist
-    });
-
-    const hasSalon = Boolean(selectedSalon?.salonId);
-    const hasServices = selectedServices.length > 0 || selectedCombos.length > 0;
-    const hasDate = Boolean(selectedDate?.date);  // Kiểm tra cụ thể date
-    const hasTime = Boolean(selectedTime);        // Kiểm tra time
-    const hasStylist = Boolean(selectedStylist);  // Kiểm tra stylist
-
-    // Log từng điều kiện
-    console.log('Individual conditions:', {
-      hasSalon,
-      hasServices,
-      hasDate,
-      hasTime,
-      hasStylist,
-      dateValue: selectedDate?.date,
-      timeValue: selectedTime,
-      stylistValue: selectedStylist
-    });
-
-    return hasSalon && hasServices && hasDate && hasTime && hasStylist;
-  };
-
   return (
     <div className="booking-wrapper">
       {step > 0 && (
@@ -338,3 +317,4 @@ const BookingComponent = () => {
 };
 
 export default BookingComponent;
+
